@@ -79,8 +79,9 @@ const Main = () => {
   }
 
   function onRun(profile) {
-    process.env.USERPROFILE = profilesPath.concat('\\', profile);
-    spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`]);
+    spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`], {
+      env: { USERPROFILE: profilesPath.concat('\\', profile) },
+    });
 
     Logger(`${profile} is started!`);
   }
