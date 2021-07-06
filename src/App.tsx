@@ -3,26 +3,24 @@ import fs from 'fs';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.global.css';
 import { spawn } from 'child_process';
-import { profilesPath, teamsPath } from './utils/ResourcesPath';
+import { configPath, profilesPath, teamsPath } from './utils/ResourcesPath';
 import Profile from './components/Profile';
 import Button from './components/Button';
 import ErrorBox from './components/ErrorBox';
 import Logger from './utils/Logger';
 import inputValidator from './utils/Validator';
 
+interface Settings {
+  onStartup: boolean;
+}
+
 const Main = () => {
+  const [settings, setSettings] = useState<Settings>();
   const [error, setError] = useState('');
   const [profiles, setProfiles] = useState([]);
   const [profileNameBox, setProfileNameBox] = useState('');
 
-  // reset all
-  useEffect(() => {
-    setError('');
-    setProfiles([]);
-    setProfileNameBox('');
-  }, []);
-
-  useEffect(() => {
+  function init() {
     if (!fs.existsSync(profilesPath)) {
       fs.mkdir(profilesPath, (err) => {
         if (err) {
@@ -31,6 +29,62 @@ const Main = () => {
         return Logger('Profile directory created');
       });
     }
+
+    if (!fs.existsSync(configPath)) {
+      fs.mkdir(configPath, (err) => {
+        if (err) {
+          return Logger(err, 'error');
+        }
+        return Logger('Config directory created');
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (!settings) return;
+
+    fs.writeFile(
+      configPath.concat('\\file.config'),
+      JSON.stringify(settings),
+      'utf8',
+      function (err) {
+        if (err) return Logger(err, 'error');
+        return Logger('config updated');
+      }
+    );
+  }, [settings]);
+
+  useEffect(() => {
+    setError('');
+    setProfiles([]);
+    setProfileNameBox('');
+  }, []);
+
+  useEffect(() => {
+    init();
+
+    // read config
+    fs.readFile(configPath.concat('\\file.config'), 'utf8', function (
+      err,
+      data
+    ) {
+      if (err) {
+        setSettings({
+          onStartup: true,
+        });
+        Logger(err, 'error');
+        return;
+      }
+      if (!data || data === 'null') {
+        setSettings({
+          onStartup: true,
+        });
+        return;
+      }
+      const json = JSON.parse(data);
+      setSettings(json);
+      Logger(`config loaded: ${json}`);
+    });
 
     fs.readdir(profilesPath, function (err, files) {
       if (err) {
@@ -42,7 +96,7 @@ const Main = () => {
           Logger(`profile loaded: ${file}`);
         }
       });
-      return Logger('profile loader end');
+      return Logger('profile loader ended');
     });
   }, []);
 
@@ -92,12 +146,21 @@ const Main = () => {
         showError('Please close Teams before deleting the profile');
         return;
       }
-
       setProfiles((preValues) =>
         preValues.filter((value) => value !== profile)
       );
       Logger(`${profile} is deleted!`);
     });
+  }
+
+  function handleOnStartup({ target }) {
+    setSettings((prevState: Settings) => {
+      return {
+        ...prevState,
+        onStartup: target.checked,
+      };
+    });
+    Logger(`onStartup setted to: ${target.checked}`);
   }
 
   return (
@@ -124,6 +187,18 @@ const Main = () => {
           </React.Fragment>
         ))}
       </div>
+
+      {settings ? (
+        <label htmlFor="onStartup">
+          <input
+            id="onStartup"
+            type="checkbox"
+            onChange={handleOnStartup}
+            checked={settings.onStartup}
+          />
+          Run on startup
+        </label>
+      ) : null}
     </div>
   );
 };

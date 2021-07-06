@@ -9,3 +9,5 @@ export const homePath = __dirname.substring(0, __dirname.lastIndexOf('\\'));
 export const profilesPath = homePath.concat('\\profiles');
 
 export const logsPath = homePath.concat('\\logs');
+
+export const configPath = homePath.concat('\\config');
