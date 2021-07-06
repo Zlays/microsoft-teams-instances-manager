@@ -7,6 +7,8 @@ import { profilesPath, teamsPath } from './utils/ResourcesPath';
 import Profile from './components/Profile';
 import Button from './components/Button';
 import ErrorBox from './components/ErrorBox';
+import Logger from './utils/Logger';
+import inputValidator from './utils/Validator';
 
 const Main = () => {
   const [error, setError] = useState('');
@@ -24,23 +26,23 @@ const Main = () => {
     if (!fs.existsSync(profilesPath)) {
       fs.mkdir(profilesPath, (err) => {
         if (err) {
-          return console.error(err);
+          return Logger(err, 'error');
         }
-        return console.debug('Profile directory created');
+        return Logger('Profile directory created');
       });
     }
 
     fs.readdir(profilesPath, function (err, files) {
       if (err) {
-        return console.debug('Unable to scan directory:', err);
+        return Logger(err, 'error');
       }
       files.forEach(function (file) {
         if (fs.lstatSync(profilesPath.concat('\\', file)).isDirectory()) {
           setProfiles((preValues) => [...preValues, file]);
-          console.debug('profile loaded:', file);
+          Logger(`profile loaded: ${file}`);
         }
       });
-      return console.debug('profile loader end');
+      return Logger('profile loader end');
     });
   }, []);
 
@@ -64,23 +66,23 @@ const Main = () => {
 
     fs.mkdir(dir, (err) => {
       if (err) {
-        return console.error(err);
+        return Logger(err, 'error');
       }
       setProfiles((preValues) => [...preValues, profileName]);
-      return console.debug('Directory created successfully: ', dir);
+      return Logger(`Directory created successfully: ${dir}`);
     });
-    console.debug('profile added: ', profileName);
+    Logger(`profile added: ${profileName}`);
   }
 
   function handleProfileNameBox({ target }) {
-    setProfileNameBox(() => target.value);
+    setProfileNameBox(() => inputValidator(target.value));
   }
 
   function onRun(profile) {
     process.env.USERPROFILE = profilesPath.concat('\\', profile);
     spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`]);
 
-    console.debug(`${profile} is started!`);
+    Logger(`${profile} is started!`);
   }
 
   function onDelete(profile) {
@@ -93,7 +95,7 @@ const Main = () => {
       setProfiles((preValues) =>
         preValues.filter((value) => value !== profile)
       );
-      console.debug(`${profile} is deleted!`);
+      Logger(`${profile} is deleted!`);
     });
   }
 
