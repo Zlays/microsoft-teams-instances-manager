@@ -21,6 +21,15 @@ const Main = () => {
   }, []);
 
   useEffect(() => {
+    if (!fs.existsSync(profilesPath)) {
+      fs.mkdir(profilesPath, (err) => {
+        if (err) {
+          return console.error(err);
+        }
+        return console.debug('Profile directory created');
+      });
+    }
+
     fs.readdir(profilesPath, function (err, files) {
       if (err) {
         return console.debug('Unable to scan directory:', err);

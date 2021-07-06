@@ -50,4 +50,4 @@ npm-debug.log.*
 *.scss.d.ts
 
 # Custom
-profiles/**
+src/profiles/**
