@@ -3,15 +3,24 @@ import fs from 'fs';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.global.css';
 import { spawn } from 'child_process';
+import AutoLaunch from 'auto-launch';
 import { configPath, profilesPath, teamsPath } from './utils/ResourcesPath';
 import Profile from './components/Profile';
 import Button from './components/Button';
 import ErrorBox from './components/ErrorBox';
 import Logger from './utils/Logger';
 import inputValidator from './utils/Validator';
+import packageJSON from './package.json';
+
+const AutoLauncher = new AutoLaunch({
+  name: packageJSON.name,
+  author: packageJSON.author,
+});
+AutoLauncher.enable();
 
 interface Settings {
   onStartup: boolean;
+  autoLaunch: boolean;
 }
 
 const Main = () => {
@@ -47,6 +56,30 @@ const Main = () => {
     Logger(`${profile} is started!`);
   }
 
+  function loadConfig(): boolean {
+    let data: string;
+    let json: Settings;
+    try {
+      data = fs.readFileSync(configPath.concat('\\file.config'), 'utf8');
+    } catch (err) {
+      json = {
+        onStartup: true,
+        autoLaunch: true,
+      };
+      Logger(`error loading configurations: ${err}`, 'error');
+    }
+    if (!json) json = JSON.parse(data);
+    if (!json) {
+      setSettings({
+        onStartup: true,
+        autoLaunch: true,
+      });
+    }
+    setSettings(json);
+    Logger(`config loaded: ${json}`);
+    return json.onStartup;
+  }
+
   useEffect(() => {
     if (!settings) return;
 
@@ -54,11 +87,17 @@ const Main = () => {
       configPath.concat('\\file.config'),
       JSON.stringify(settings),
       'utf8',
-      function (err) {
+      (err) => {
         if (err) return Logger(err, 'error');
         return Logger('config updated');
       }
     );
+
+    if (settings.autoLaunch === true) {
+      AutoLauncher.enable();
+    } else if (settings.autoLaunch === false && AutoLauncher.isEnabled()) {
+      AutoLauncher.disable();
+    }
   }, [settings]);
 
   useEffect(() => {
@@ -69,28 +108,17 @@ const Main = () => {
 
   useEffect(() => {
     init();
+    const checked = loadConfig();
 
-    const data: Settings = JSON.parse(
-      fs.readFileSync(configPath.concat('\\file.config'), 'utf8')
-    );
-    if (!data) {
-      setSettings({
-        onStartup: true,
-      });
-      return;
-    }
-    setSettings(data);
-    Logger(`config loaded: ${data}`);
-
-    fs.readdir(profilesPath, function (err, files) {
+    fs.readdir(profilesPath, (err, files) => {
       if (err) {
         return Logger(err, 'error');
       }
-      files.forEach(function (file) {
+      files.forEach((file) => {
         if (fs.lstatSync(profilesPath.concat('\\', file)).isDirectory()) {
           setProfiles((preValues) => [...preValues, file]);
 
-          if (data.onStartup) onRun(file);
+          if (checked) onRun(file);
 
           Logger(`profile loaded: ${file}`);
         }
@@ -154,6 +182,16 @@ const Main = () => {
     Logger(`onStartup setted to: ${target.checked}`);
   }
 
+  function handleAutoLaunch({ target }) {
+    setSettings((prevState: Settings) => {
+      return {
+        ...prevState,
+        autoLaunch: target.checked,
+      };
+    });
+    Logger(`onStartup setted to: ${target.checked}`);
+  }
+
   return (
     <div>
       <ErrorBox text={error} />
@@ -180,15 +218,26 @@ const Main = () => {
       </div>
 
       {settings ? (
-        <label htmlFor="onStartup">
-          <input
-            id="onStartup"
-            type="checkbox"
-            onChange={handleOnStartup}
-            checked={settings.onStartup}
-          />
-          Run on startup
-        </label>
+        <>
+          <label htmlFor="onStartup">
+            <input
+              id="onStartup"
+              type="checkbox"
+              onChange={handleOnStartup}
+              checked={settings.onStartup}
+            />
+            Run on startup
+          </label>
+          <label htmlFor="autoLaunch">
+            <input
+              id="autoLaunch"
+              type="checkbox"
+              onChange={handleAutoLaunch}
+              checked={settings.autoLaunch}
+            />
+            auto launch
+          </label>
+        </>
       ) : null}
     </div>
   );
