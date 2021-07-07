@@ -11,6 +11,7 @@ import ErrorBox from './components/ErrorBox';
 import Logger from './utils/Logger';
 import inputValidator from './utils/Validator';
 import packageJSON from './package.json';
+import { Row } from './components/FlexCSS';
 
 const AutoLauncher = new AutoLaunch({
   name: packageJSON.name,
@@ -160,6 +161,8 @@ const Main = () => {
       setProfiles((preValues) => [...preValues, profileName]);
       return Logger(`Directory created successfully: ${dir}`);
     });
+
+    setProfileNameBox('');
     Logger(`profile added: ${profileName}`);
   }
 
@@ -205,7 +208,7 @@ const Main = () => {
       <ErrorBox text={error} />
 
       {settings ? (
-        <div>
+        <Row>
           <label htmlFor="onStartup">
             <input
               id="onStartup"
@@ -213,7 +216,7 @@ const Main = () => {
               onChange={handleOnStartup}
               checked={settings.onStartup}
             />
-            Run on startup
+            Run instances on startup
           </label>
           <label htmlFor="autoLaunch">
             <input
@@ -222,9 +225,9 @@ const Main = () => {
               onChange={handleAutoLaunch}
               checked={settings.autoLaunch}
             />
-            auto launch
+            Run app on startup
           </label>
-        </div>
+        </Row>
       ) : null}
       <div>
         <input

@@ -32,7 +32,7 @@ const FlexBottomItem = styled.div`
 const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
+  justify-content: space-around;
   align-content: center;
   align-items: center;
 `;

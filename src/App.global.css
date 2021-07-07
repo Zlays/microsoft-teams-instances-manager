@@ -11,8 +11,8 @@ body * {
 body {
   height: 100%;
   width: 100%;
-  max-width: 80vw;
-  margin: 0 auto !important;
+  max-width: 90vw;
+  margin: 0 auto;
   color: white;
   font-family: sans-serif;
   overflow-x: hidden;
@@ -22,5 +22,5 @@ body {
   justify-content: flex-start;
   align-content: flex-start;
 
-  background: linear-gradient(200.96deg, #1c8e92 -29.09%, #1e53bd 85.77%);
+  background: #1e53bd;
 }
