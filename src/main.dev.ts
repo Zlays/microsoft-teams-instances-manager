@@ -66,16 +66,31 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728,
-    icon: getAssetPath('icon.png'),
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
-
+  if (process.env.NODE_ENV === 'production') {
+    mainWindow = new BrowserWindow({
+      show: false,
+      minWidth: 500,
+      maxWidth: 500,
+      maxHeight: 400,
+      minHeight: 400,
+      icon: getAssetPath('icon.png'),
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      show: false,
+      minWidth: 1000,
+      maxWidth: 1000,
+      maxHeight: 400,
+      minHeight: 400,
+      icon: getAssetPath('icon.png'),
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+  }
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // @TODO: Use 'ready-to-show' event

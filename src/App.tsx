@@ -203,30 +203,9 @@ const Main = () => {
   return (
     <div>
       <ErrorBox text={error} />
-      <div>
-        <input
-          type="text"
-          name="profileNameBox"
-          placeholder="Enter profile name here..."
-          value={profileNameBox}
-          onChange={handleProfileNameBox}
-        />
-        <Button text="Add profile" click={addProfile} />
-      </div>
-      <div>
-        {profiles.map((profile) => (
-          <React.Fragment key={profile}>
-            <Profile
-              text={profile}
-              onRun={() => onRun(profile)}
-              onDelete={() => onDelete(profile)}
-            />
-          </React.Fragment>
-        ))}
-      </div>
 
       {settings ? (
-        <>
+        <div>
           <label htmlFor="onStartup">
             <input
               id="onStartup"
@@ -245,8 +224,28 @@ const Main = () => {
             />
             auto launch
           </label>
-        </>
+        </div>
       ) : null}
+      <div>
+        <input
+          type="text"
+          name="profileNameBox"
+          placeholder="Enter profile name here..."
+          value={profileNameBox}
+          onChange={handleProfileNameBox}
+        />
+        <Button text="Add profile" click={addProfile} />
+      </div>
+
+      {profiles.map((profile) => (
+        <React.Fragment key={profile}>
+          <Profile
+            text={profile}
+            onRun={() => onRun(profile)}
+            onDelete={() => onDelete(profile)}
+          />
+        </React.Fragment>
+      ))}
     </div>
   );
 };
