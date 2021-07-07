@@ -40,6 +40,13 @@ const Main = () => {
     }
   }
 
+  function onRun(profile) {
+    spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`], {
+      env: { USERPROFILE: profilesPath.concat('\\', profile) },
+    });
+    Logger(`${profile} is started!`);
+  }
+
   useEffect(() => {
     if (!settings) return;
 
@@ -63,28 +70,17 @@ const Main = () => {
   useEffect(() => {
     init();
 
-    // read config
-    fs.readFile(configPath.concat('\\file.config'), 'utf8', function (
-      err,
-      data
-    ) {
-      if (err) {
-        setSettings({
-          onStartup: true,
-        });
-        Logger(err, 'error');
-        return;
-      }
-      if (!data || data === 'null') {
-        setSettings({
-          onStartup: true,
-        });
-        return;
-      }
-      const json = JSON.parse(data);
-      setSettings(json);
-      Logger(`config loaded: ${json}`);
-    });
+    const data: Settings = JSON.parse(
+      fs.readFileSync(configPath.concat('\\file.config'), 'utf8')
+    );
+    if (!data) {
+      setSettings({
+        onStartup: true,
+      });
+      return;
+    }
+    setSettings(data);
+    Logger(`config loaded: ${data}`);
 
     fs.readdir(profilesPath, function (err, files) {
       if (err) {
@@ -93,6 +89,9 @@ const Main = () => {
       files.forEach(function (file) {
         if (fs.lstatSync(profilesPath.concat('\\', file)).isDirectory()) {
           setProfiles((preValues) => [...preValues, file]);
+
+          if (data.onStartup) onRun(file);
+
           Logger(`profile loaded: ${file}`);
         }
       });
@@ -130,14 +129,6 @@ const Main = () => {
 
   function handleProfileNameBox({ target }) {
     setProfileNameBox(() => inputValidator(target.value));
-  }
-
-  function onRun(profile) {
-    spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`], {
-      env: { USERPROFILE: profilesPath.concat('\\', profile) },
-    });
-
-    Logger(`${profile} is started!`);
   }
 
   function onDelete(profile) {
