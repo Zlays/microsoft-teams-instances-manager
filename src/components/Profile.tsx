@@ -22,7 +22,6 @@ function Profile(props: Props) {
     <>
       {text ? (
         <ProfileCSS>
-          {/* eslint-disable-next-line react/jsx-no-undef */}
           <LeftFlexTextCSS>{text}</LeftFlexTextCSS>
           <FlexItem>
             <Button click={() => onRun(text)} text="run" />
