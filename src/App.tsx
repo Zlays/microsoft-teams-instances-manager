@@ -16,7 +16,6 @@ const AutoLauncher = new AutoLaunch({
   name: packageJSON.name,
   author: packageJSON.author,
 });
-AutoLauncher.enable();
 
 interface Settings {
   onStartup: boolean;
@@ -75,8 +74,10 @@ const Main = () => {
         autoLaunch: true,
       });
     }
+    if (json.onStartup === null) json.onStartup = true;
+    if (json.autoLaunch === null) json.onStartup = true;
     setSettings(json);
-    Logger(`config loaded: ${json}`);
+    Logger(`config loaded: ${JSON.stringify(json)}`);
     return json.onStartup;
   }
 
@@ -93,11 +94,18 @@ const Main = () => {
       }
     );
 
-    if (settings.autoLaunch === true) {
-      AutoLauncher.enable();
-    } else if (settings.autoLaunch === false && AutoLauncher.isEnabled()) {
-      AutoLauncher.disable();
-    }
+    AutoLauncher.isEnabled()
+      .then((isEnabled: boolean) => {
+        if (isEnabled && !settings.autoLaunch) {
+          AutoLauncher.disable();
+        } else if (!isEnabled && settings.autoLaunch) {
+          AutoLauncher.enable();
+        }
+        return !isEnabled;
+      })
+      .catch((err) => {
+        Logger(err, 'error');
+      });
   }, [settings]);
 
   useEffect(() => {

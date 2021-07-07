@@ -1,11 +1,11 @@
 {
   "name": "microsoft-teams-instances-manager",
-  "productName": "Mirko Buccella",
+  "productName": "microsoft-teams-instances-manager",
   "version": "1.0.0",
   "description": "",
   "main": "./main.prod.js",
   "author": {
-    "name": "microsoft-teams-instances-manager",
+    "name": "Mirko Buccella",
     "email": "mirko.buccella.lavoro@gmail.com",
     "url": "https://github.com/Zlays/microsoft-teams-instances-manager"
   },
