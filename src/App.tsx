@@ -11,6 +11,7 @@ import ErrorBox from './components/ErrorBox';
 import Logger from './utils/Logger';
 import inputValidator from './utils/Validator';
 import packageJSON from './package.json';
+import { Row } from './components/FlexCSS';
 
 const AutoLauncher = new AutoLaunch({
   name: packageJSON.name,
@@ -160,6 +161,8 @@ const Main = () => {
       setProfiles((preValues) => [...preValues, profileName]);
       return Logger(`Directory created successfully: ${dir}`);
     });
+
+    setProfileNameBox('');
     Logger(`profile added: ${profileName}`);
   }
 
@@ -203,6 +206,29 @@ const Main = () => {
   return (
     <div>
       <ErrorBox text={error} />
+
+      {settings ? (
+        <Row>
+          <label htmlFor="onStartup">
+            <input
+              id="onStartup"
+              type="checkbox"
+              onChange={handleOnStartup}
+              checked={settings.onStartup}
+            />
+            Run instances on startup
+          </label>
+          <label htmlFor="autoLaunch">
+            <input
+              id="autoLaunch"
+              type="checkbox"
+              onChange={handleAutoLaunch}
+              checked={settings.autoLaunch}
+            />
+            Run app on startup
+          </label>
+        </Row>
+      ) : null}
       <div>
         <input
           type="text"
@@ -213,40 +239,16 @@ const Main = () => {
         />
         <Button text="Add profile" click={addProfile} />
       </div>
-      <div>
-        {profiles.map((profile) => (
-          <React.Fragment key={profile}>
-            <Profile
-              text={profile}
-              onRun={() => onRun(profile)}
-              onDelete={() => onDelete(profile)}
-            />
-          </React.Fragment>
-        ))}
-      </div>
 
-      {settings ? (
-        <>
-          <label htmlFor="onStartup">
-            <input
-              id="onStartup"
-              type="checkbox"
-              onChange={handleOnStartup}
-              checked={settings.onStartup}
-            />
-            Run on startup
-          </label>
-          <label htmlFor="autoLaunch">
-            <input
-              id="autoLaunch"
-              type="checkbox"
-              onChange={handleAutoLaunch}
-              checked={settings.autoLaunch}
-            />
-            auto launch
-          </label>
-        </>
-      ) : null}
+      {profiles.map((profile) => (
+        <React.Fragment key={profile}>
+          <Profile
+            text={profile}
+            onRun={() => onRun(profile)}
+            onDelete={() => onDelete(profile)}
+          />
+        </React.Fragment>
+      ))}
     </div>
   );
 };

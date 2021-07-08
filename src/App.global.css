@@ -1,19 +1,26 @@
-* {
-  box-sizing: content-box;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body * {
+  margin: 0.2rem;
 }
 
 body {
-  margin: 0;
-  height: 100vh;
-  width: 100vw;
-  position: relative;
+  height: 100%;
+  width: 100%;
+  max-width: 90vw;
+  margin: 0 auto;
   color: white;
-  background: linear-gradient(200.96deg, #1c8e92 -29.09%, #1e53bd 85.77%);
   font-family: sans-serif;
-  overflow-y: hidden;
+  overflow-x: hidden;
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
   align-items: center;
-  justify-content: center;
-  align-content: center;
+  justify-content: flex-start;
+  align-content: flex-start;
+
+  background: #1e53bd;
 }

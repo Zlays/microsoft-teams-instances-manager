@@ -32,9 +32,19 @@ const FlexBottomItem = styled.div`
 const Row = styled.div`
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
+  justify-content: space-around;
   align-content: center;
   align-items: center;
 `;
 
-export { FlexItem, Row, Root, FlexBottomItem };
+const LeftFlexTextCSS = styled(FlexItem)`
+  display: inline-block;
+  flex-grow: 1;
+  text-align: left;
+  justify-content: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+export { FlexItem, Row, Root, FlexBottomItem, LeftFlexTextCSS };

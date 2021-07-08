@@ -1,17 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import Button from './Button';
-import { FlexItem } from './FlexCSS';
+import { FlexItem, LeftFlexTextCSS } from './FlexCSS';
 
 const ProfileCSS = styled.div`
+  max-width: 80vw;
   display: flex;
-  flex-flow: row wrap;
-
-  &:hover {
-  }
-
-  &:active {
-  }
+  flex-flow: row nowrap;
 `;
 
 interface Props {
@@ -27,7 +22,7 @@ function Profile(props: Props) {
     <>
       {text ? (
         <ProfileCSS>
-          <FlexItem>{text}</FlexItem>
+          <LeftFlexTextCSS>{text}</LeftFlexTextCSS>
           <FlexItem>
             <Button click={() => onRun(text)} text="run" />
           </FlexItem>
