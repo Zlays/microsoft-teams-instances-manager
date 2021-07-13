@@ -11,9 +11,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, Menu, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import packageJSON from './package.json';
 
 export default class AppUpdater {
   constructor() {
@@ -24,6 +25,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let tray = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -66,6 +68,21 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  const trayMenu: Electron.Menu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click() {
+        mainWindow.show();
+      },
+    },
+    {
+      label: 'Quit',
+      click() {
+        mainWindow.close();
+      },
+    },
+  ]);
+
   if (process.env.NODE_ENV === 'production') {
     mainWindow = new BrowserWindow({
       show: false,
@@ -105,6 +122,21 @@ const createWindow = async () => {
       mainWindow.show();
       mainWindow.focus();
     }
+  });
+
+  mainWindow.on('minimize', () => {
+    if (tray) {
+      mainWindow.hide();
+    }
+    tray = new Tray(getAssetPath('icon.png'));
+
+    tray.on('double-click', () => {
+      mainWindow.show();
+    });
+
+    tray.setContextMenu(trayMenu);
+    tray.setToolTip(packageJSON.name);
+    mainWindow.hide();
   });
 
   mainWindow.on('closed', () => {

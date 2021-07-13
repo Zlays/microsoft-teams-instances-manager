@@ -206,7 +206,6 @@ const Main = () => {
   return (
     <div>
       <ErrorBox text={error} />
-
       {settings ? (
         <Row>
           <label htmlFor="onStartup">
