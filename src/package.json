@@ -7,7 +7,7 @@
   "author": {
     "name": "Mirko Buccella",
     "email": "mirko.buccella.lavoro@gmail.com",
-    "url": "https://github.com/Zlays/microsoft-teams-instances-manager"
+    "url": "https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager"
   },
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",

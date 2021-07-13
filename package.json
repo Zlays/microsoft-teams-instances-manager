@@ -93,16 +93,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zlays/microsoft-teams-instances-manager.git"
+    "url": "git+https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager.git"
   },
   "author": {
     "name": "microsoft-teams-instances-manager Maintainers",
     "email": "mirko.buccella.lavoro@gmail.com",
-    "url": "https://github.com/zlays/microsoft-teams-instances-manager"
+    "url": "https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/zlays/microsoft-teams-instances-manager/issues"
+    "url": "https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager/issues"
   },
   "keywords": [
     "electron",
@@ -115,7 +115,7 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/zlays/microsoft-teams-instances-manager#readme",
+  "homepage": "https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {

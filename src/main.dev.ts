@@ -11,9 +11,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, shell, Menu, Tray } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import packageJSON from './package.json';
 
 export default class AppUpdater {
   constructor() {
@@ -24,6 +25,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let tray = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -66,6 +68,22 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+
+  const trayMenu: Electron.Menu = Menu.buildFromTemplate([
+    {
+      label: 'Show App',
+      click() {
+        mainWindow.show();
+      },
+    },
+    {
+      label: 'Quit',
+      click() {
+        mainWindow.close();
+      },
+    },
+  ]);
+
   if (process.env.NODE_ENV === 'production') {
     mainWindow = new BrowserWindow({
       show: false,
@@ -107,6 +125,21 @@ const createWindow = async () => {
     }
   });
 
+  mainWindow.on('minimize', () => {
+    if (tray) {
+      mainWindow.hide();
+    }
+    tray = new Tray(getAssetPath('icon.png'));
+
+    tray.on('double-click', () => {
+      mainWindow.show();
+    });
+
+    tray.setContextMenu(trayMenu);
+    tray.setToolTip(packageJSON.name);
+    mainWindow.hide();
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -142,4 +175,31 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
+});
+
+function sendStatusToWindow(text) {
+  log.info(text);
+  mainWindow.webContents.send('message', text);
+}
+
+autoUpdater.on('checking-for-update', () => {
+  sendStatusToWindow('Checking for update...');
+});
+autoUpdater.on('update-available', () => {
+  sendStatusToWindow('Update available.');
+});
+autoUpdater.on('update-not-available', () => {
+  sendStatusToWindow('Update not available.');
+});
+autoUpdater.on('error', (err) => {
+  sendStatusToWindow(`Error in auto-updater. ${err}`);
+});
+autoUpdater.on('download-progress', (progressObj) => {
+  let logMessage = `Download speed: ${progressObj.bytesPerSecond}`;
+  logMessage = `${logMessage} - Downloaded ${progressObj.percent}%`;
+  logMessage = `${logMessage} (${progressObj.transferred}/${progressObj.total})`;
+  sendStatusToWindow(logMessage);
+});
+autoUpdater.on('update-downloaded', () => {
+  sendStatusToWindow('Update downloaded');
 });
