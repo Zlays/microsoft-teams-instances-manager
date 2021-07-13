@@ -68,6 +68,7 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+
   const trayMenu: Electron.Menu = Menu.buildFromTemplate([
     {
       label: 'Show App',
