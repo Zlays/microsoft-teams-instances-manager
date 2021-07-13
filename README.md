@@ -1,3 +1,3 @@
 # Download
 
-[Link](https://github.com/ZlaysWorkshop/microsoft-teams-instances-manager/releases)
+[Link](https://github.com/ZlaysWorkshopWorkshop/microsoft-teams-instances-manager/releases)
