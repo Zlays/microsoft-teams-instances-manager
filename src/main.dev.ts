@@ -1,13 +1,5 @@
 /* eslint global-require: off, no-console: off */
 
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `yarn build` or `yarn build:main`, this file is compiled to
- * `./src/main.prod.js` using webpack. This gives us some performance wins.
- */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
@@ -68,7 +60,6 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
-
   const trayMenu: Electron.Menu = Menu.buildFromTemplate([
     {
       label: 'Show App',
@@ -84,29 +75,37 @@ const createWindow = async () => {
     },
   ]);
 
+  const h = 500;
+  let w = 400;
+  const icon = getAssetPath('icon.png');
+  const webPreferences = {
+    nodeIntegration: true,
+  };
+
   if (process.env.NODE_ENV === 'production') {
     mainWindow = new BrowserWindow({
       show: false,
-      minWidth: 500,
-      maxWidth: 500,
-      maxHeight: 400,
-      minHeight: 400,
-      icon: getAssetPath('icon.png'),
-      webPreferences: {
-        nodeIntegration: true,
-      },
+      width: w,
+      minWidth: w,
+      maxWidth: w,
+      height: h,
+      maxHeight: h,
+      minHeight: h,
+      icon,
+      webPreferences,
     });
   } else {
+    w = 1000;
     mainWindow = new BrowserWindow({
       show: false,
-      minWidth: 1000,
-      maxWidth: 1000,
-      maxHeight: 400,
-      minHeight: 400,
-      icon: getAssetPath('icon.png'),
-      webPreferences: {
-        nodeIntegration: true,
-      },
+      width: w,
+      minWidth: w,
+      maxWidth: w,
+      height: h,
+      maxHeight: h,
+      minHeight: h,
+      icon,
+      webPreferences,
     });
   }
   mainWindow.loadURL(`file://${__dirname}/index.html`);

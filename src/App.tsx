@@ -40,6 +40,8 @@ const Main = () => {
     setProfiles([]);
     setProfileNameBox('');
 
+    await sleep(1250);
+
     if (!fs.existsSync(profilesPath)) {
       fs.mkdir(profilesPath, (err) => {
         if (err) {
