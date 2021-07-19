@@ -36,8 +36,6 @@ const Main = () => {
   }
 
   async function init() {
-    await sleep(1250);
-
     setError('');
     setProfiles([]);
     setProfileNameBox('');
@@ -59,6 +57,8 @@ const Main = () => {
         return Logger('Config directory created');
       });
     }
+
+    return await sleep(1250);
   }
 
   function onRun(profile) {
@@ -122,24 +122,27 @@ const Main = () => {
   }, [settings]);
 
   useEffect(() => {
-    init();
-    const checked = loadConfig();
+    init()
+      .then(() => {
+        const checked = loadConfig();
 
-    fs.readdir(profilesPath, (err, files) => {
-      if (err) {
-        return Logger(err, 'error');
-      }
-      files.forEach((file) => {
-        if (fs.lstatSync(profilesPath.concat('\\', file)).isDirectory()) {
-          setProfiles((preValues) => [...preValues, file]);
+        fs.readdir(profilesPath, (err, files) => {
+          if (err) {
+            return Logger(err, 'error');
+          }
+          files.forEach((file) => {
+            if (fs.lstatSync(profilesPath.concat('\\', file)).isDirectory()) {
+              setProfiles((preValues) => [...preValues, file]);
+              if (checked) onRun(file);
+              Logger(`profile loaded: ${file}`);
+            }
+          });
+          return Logger('profile loader ended');
+        });
 
-          if (checked) onRun(file);
-
-          Logger(`profile loaded: ${file}`);
-        }
-      });
-      return Logger('profile loader ended');
-    });
+        return Logger('Init ended');
+      })
+      .catch((err) => Logger(err, 'error'));
   }, []);
 
   function showError(text) {
