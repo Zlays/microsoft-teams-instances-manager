@@ -29,7 +29,19 @@ const Main = () => {
   const [profiles, setProfiles] = useState([]);
   const [profileNameBox, setProfileNameBox] = useState('');
 
-  function init() {
+  function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  async function init() {
+    await sleep(1250);
+
+    setError('');
+    setProfiles([]);
+    setProfileNameBox('');
+
     if (!fs.existsSync(profilesPath)) {
       fs.mkdir(profilesPath, (err) => {
         if (err) {
@@ -108,12 +120,6 @@ const Main = () => {
         Logger(err, 'error');
       });
   }, [settings]);
-
-  useEffect(() => {
-    setError('');
-    setProfiles([]);
-    setProfileNameBox('');
-  }, []);
 
   useEffect(() => {
     init();

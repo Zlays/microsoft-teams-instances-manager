@@ -1,7 +1,7 @@
 {
   "name": "microsoft-teams-instances-manager",
   "productName": "microsoft-teams-instances-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./main.prod.js",
   "author": {
