@@ -36,11 +36,11 @@ const Main = () => {
   }
 
   async function init() {
-    await sleep(1250);
-
     setError('');
     setProfiles([]);
     setProfileNameBox('');
+
+    await sleep(1250);
 
     if (!fs.existsSync(profilesPath)) {
       fs.mkdir(profilesPath, (err) => {
@@ -134,7 +134,6 @@ const Main = () => {
           setProfiles((preValues) => [...preValues, file]);
 
           if (checked) onRun(file);
-
           Logger(`profile loaded: ${file}`);
         }
       });
