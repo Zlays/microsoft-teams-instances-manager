@@ -64,6 +64,15 @@ const Main = () => {
   }
 
   function onRun(profile) {
+    const dir = profilesPath.concat('\\', profile);
+    const downloadDir = dir.concat('\\downloads');
+    fs.mkdir(downloadDir, (err) => {
+      if (err) {
+        return Logger(err, 'error');
+      }
+      return Logger(`Directory created successfully: ${downloadDir}`);
+    });
+
     spawn('powershell', [`start ${teamsPath}\\current\\Teams.exe`], {
       env: { USERPROFILE: profilesPath.concat('\\', profile) },
     });
